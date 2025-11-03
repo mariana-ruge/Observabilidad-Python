@@ -1,46 +1,52 @@
-#Importar librerias
 import logging
 import time
 from fastapi import FastAPI
+
+# Prometheus
+from prometheus_fastapi_instrumentator import Instrumentator
+
+# OpenTelemetry
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.sdk.resources import Resource
-
-# Configuración del logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Configuración de OpenTelemetry
-#Consumo de servicios
-resource = Resource(attributes={"service.name": "fastapi-service"})
-provider = TracerProvider(resource=resource)
-processor = BatchSpanProcessor(OTLPSpanExporter(endpoint="http://alloy:4318/v1/traces"))
-
-#Llamar a los objetos
-provider.add_span_processor(processor)
-trace.set_tracer_provider(provider)
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
-#Construir la app con FastAPI
+# Crear la app
 app = FastAPI()
 
+# Configurar logs
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("app-logs")
 
-#Buscar el endpoint de la API
-@app.get("/")
-def read_root():
-    logger.info("Root endpoint called")
-    return {"Hello": "World"}
+# Configurar OpenTelemetry Trace → Alloy → Tempo
+resource = Resource(attributes={"service.name": "fastapi-service"})
+provider = TracerProvider(resource=resource)
+span_exporter = OTLPSpanExporter(endpoint="http://alloy:4318/v1/traces")
+provider.add_span_processor(BatchSpanProcessor(span_exporter))
+trace.set_tracer_provider(provider)
 
-#Esperar respuestas de las API
-@app.get("/slow")
-def slow_endpoint():
-    logger.info("Slow endpoint called")
-    time.sleep(2)
-    #Retornar el estado del endpoint
-    return {"status": "slow request completed"}
-
-# Instrumentar FastAPI con OpenTelemetry
+# Instrumentación de FastAPI (Tracing automático)
 FastAPIInstrumentor.instrument_app(app)
+
+# Métricas Prometheus
+@app.on_event("startup")
+async def startup():
+    Instrumentator().instrument(app).expose(app)
+
+
+# ---------------- Rutas de prueba ---------------- #
+
+@app.get("/")
+def root():
+    logger.info("Root endpoint called ✅")
+    return {"message": "Observabilidad funcionando 🚀"}
+
+
+@app.get("/slow")
+def slow():
+    logger.warning("Slow endpoint processing... ⏳")
+    time.sleep(2)
+    return {"status": "Slow request completed ✅"}
