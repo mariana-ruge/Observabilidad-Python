@@ -1,8 +1,12 @@
-# prometheus.yml
+# Configuración global para Prometheus
 global:
-  scrape_interval: 15s
+  # Intervalo de scrapes (cada cuánto Prometheus recoge métricas)
+  scrape_interval: 15s  # 15 segundos
 
+# Configuración de los trabajos de scrapping
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: 'prometheus'  # Nombre del job o tarea
+
+    # Configuración de los targets estáticos
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['localhost:9090']  # Lista de endpoints a monitorear

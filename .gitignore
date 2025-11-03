@@ -11,9 +11,12 @@ venv/
 env/
 *.env
 
-# Byte-compiled
+# Byte-compiled / build artifacts
 *.egg-info/
 .eggs/
+*.whl
+build/
+dist/
 
 # Logs
 *.log
@@ -35,7 +38,25 @@ tempo_data/
 .cache/
 .mypy_cache/
 .pytest_cache/
+__pypackages__/
 
 # --- IDE/Editor ---
 .vscode/
-.idea
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.bak
+
+# --- System Files ---
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+*.orig
+
+# --- Git ---
+.git/
+.gitignore
+.gitattributes
+

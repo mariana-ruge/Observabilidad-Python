@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   alloy:
     image: grafana/alloy:latest
@@ -15,16 +17,14 @@ services:
   fastapi:
     build: ./fastapi-app
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
-    - OTEL_SERVICE_NAME=fastapi
-    - OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4317
-    - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
-    - OTEL_LOGS_EXPORTER=otlp
-    - OTEL_METRICS_EXPORTER=otlp
-    - OTEL_TRACES_EXPORTER=otlp
-
-
+      - OTEL_SERVICE_NAME=fastapi
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://alloy:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_TRACES_EXPORTER=otlp
     depends_on:
       - alloy
 
@@ -58,12 +58,14 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - "3080:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin123
-
+    volumes:
+      - grafana_data:/var/lib/grafana
 
 volumes:
   prometheus_data:
   tempo_data:
+  grafana_data:

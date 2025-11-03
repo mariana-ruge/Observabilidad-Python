@@ -1,15 +1,18 @@
+# Configuración del servidor Tempo
 server:
-  http_listen_port: 3200
+  http_listen_port: 3200  # Puerto donde el servidor HTTP escuchará
 
+# Configuración del distribuidor de datos
 distributor:
   receivers:
-    otlp:
+    otlp:  # Habilita la recepción de datos vía OTLP (OpenTelemetry Protocol)
       protocols:
-        grpc:
-          endpoint: 0.0.0.0:4317
+        grpc:  # Protocolo gRPC para recibir trazas
+          endpoint: 0.0.0.0:4317  # Dirección y puerto donde se recibirán las trazas
 
+# Configuración del almacenamiento de trazas
 storage:
   trace:
-    backend: local
+    backend: local  # Tipo de backend para almacenar las trazas (local en este caso)
     local:
-      path: /etc/tempo/blocks
+      path: /etc/tempo/blocks  # Ruta del sistema de archivos donde se guardarán los bloques de trazas

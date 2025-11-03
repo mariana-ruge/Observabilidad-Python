@@ -41,12 +41,12 @@ async def startup():
 
 @app.get("/")
 def root():
-    logger.info("Root endpoint called ✅")
-    return {"message": "Observabilidad funcionando 🚀"}
+    logger.info("Root endpoint called ")
+    return {"message": "Observabilidad funcionando "}
 
 
 @app.get("/slow")
 def slow():
-    logger.warning("Slow endpoint processing... ⏳")
+    logger.warning("Slow endpoint processing... ")
     time.sleep(2)
-    return {"status": "Slow request completed ✅"}
+    return {"status": "Slow request completed "}

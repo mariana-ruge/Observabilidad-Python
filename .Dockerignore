@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+venv/
+.env
+*.log
+docker-compose.override.yml
+prometheus_data/
+tempo_data/
+.vscode/
+.idea/
+.DS_Store
+.git/

@@ -23,7 +23,7 @@ otelcol.exporter.prometheus "prom" {
 // EXPORTERS
 // =============================
 
-// Enviar trazas a Tempo
+// Enviar trazas a Tempo en simulacion
 otelcol.exporter.otlp "tempo" {
   client {
     endpoint = "tempo:4317"
@@ -48,6 +48,8 @@ otelcol.processor.transform "resource" {
 // =============================
 // PIPELINES
 // =============================
+
+//Crear pipelines de datos
 
 // Traces
 otelcol.pipeline "traces" {
