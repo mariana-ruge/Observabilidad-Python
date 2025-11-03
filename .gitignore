@@ -1,0 +1,41 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual environments
+venv/
+env/
+*.env
+
+# Byte-compiled
+*.egg-info/
+.eggs/
+
+# Logs
+*.log
+
+# --- Docker ---
+# Docker build artifacts
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Named volumes stored locally
+prometheus_data/
+tempo_data/
+
+# Ignore Docker internal
+**/.docker/
+
+# --- FastAPI ---
+# Cache
+.cache/
+.mypy_cache/
+.pytest_cache/
+
+# --- IDE/Editor ---
+.vscode/
+.idea

@@ -1,0 +1,69 @@
+// =============================
+// RECEIVER OTLP → MÉTRICAS / LOGS / TRACES
+// =============================
+otelcol.receiver.otlp "default" {
+  protocols {
+    grpc {
+      endpoint = "0.0.0.0:4317"
+    }
+    http {
+      endpoint = "0.0.0.0:4318"
+    }
+  }
+}
+
+// =============================
+// PROMETHEUS EXPORT (PARA GRAFANA)
+// =============================
+otelcol.exporter.prometheus "prom" {
+  endpoint = "0.0.0.0:8888"
+}
+
+// =============================
+// EXPORTERS
+// =============================
+
+// Enviar trazas a Tempo
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+    tls { insecure = true }
+  }
+}
+
+// Enviar logs a Loki
+loki.write "loki" {
+  endpoint = "http://loki:3100/loki/api/v1/push"
+}
+
+// =============================
+// PROCESSOR: Añadir service.name
+// =============================
+otelcol.processor.transform "resource" {
+  statements = [
+    "set(resource.attributes['service.name'], 'fastapi-service')"
+  ]
+}
+
+// =============================
+// PIPELINES
+// =============================
+
+// Traces
+otelcol.pipeline "traces" {
+  receivers  = [otelcol.receiver.otlp.default]
+  processors = [otelcol.processor.transform.resource]
+  exporters  = [otelcol.exporter.otlp.tempo]
+}
+
+// Logs
+otelcol.pipeline "logs" {
+  receivers  = [otelcol.receiver.otlp.default]
+  exporters  = [loki.write.loki]
+}
+
+// Metrics
+otelcol.pipeline "metrics" {
+  receivers  = [otelcol.receiver.otlp.default]
+  exporters  = [otelcol.exporter.prometheus.prom]
+}
